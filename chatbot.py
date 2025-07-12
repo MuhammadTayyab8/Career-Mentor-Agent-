@@ -2,6 +2,8 @@ import os
 from dotenv import find_dotenv, load_dotenv
 import chainlit as cl
 from agents import AsyncOpenAI, OpenAIChatCompletionsModel, RunConfig, Agent, Runner
+import asyncio
+
 
 
 load_dotenv(find_dotenv())
@@ -39,12 +41,17 @@ agent1 = Agent(
 
 user_input = input("Enter Query: ")
 
-result = Runner.run_sync(
-    agent1,
-    input=user_input,
-    run_config=run_config
-)
 
-print(result.final_output)
+async def main():
+    result = await Runner.run(
+        agent1,
+        input=user_input,
+        run_config=run_config
+    )
+
+    print(result.final_output)
+
+
+asyncio.run(main())
 
 
