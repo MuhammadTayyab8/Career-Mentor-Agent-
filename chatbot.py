@@ -33,18 +33,22 @@ run_config = RunConfig(
 
 
 # TOOL
+career_skills = {
+    "cybersecurity": ["Network Security", "Ethical Hacking", "SIEM tools (Splunk)", "Python Scripting"],
+    "data science": ["Python", "Pandas", "SQL", "Machine Learning", "Data Visualization"],
+    "web development": ["HTML", "CSS", "JavaScript", "React", "Node.js"],
+    "ai engineer": ["Python", "TensorFlow", "PyTorch", "Neural Networks"],
+    "mobile app developer": ["Flutter", "Dart", "UI/UX Basics", "Firebase"]
+}
+
 @function_tool
-def get_career_roadmap(field: str) -> str:
-    """
-    Returns a roadmap of skills needed for a given career field.
-    """
-    roadmaps = {
-        "data science": "1. Python\n2. Statistics\n3. Machine Learning\n4. SQL\n5. Communication",
-        "graphic design": "1. Adobe Photoshop\n2. Illustrator\n3. Branding\n4. UI/UX\n5. Portfolio Building"
-    }
-
-    return roadmaps.get(field.lower(), "Roadmap not found for the specified field.")    
-
+@cl.step(type="Roadmap of skills")
+def get_career_roadmap(field: str) -> dict:
+    """This return a roadmap of provided skill"""
+    skills = career_skills.get(field.lower())
+    if skills:
+        return {"skills": skills}
+    return {"skills": ["Research", "Field-specific tools", "Certifications"]}
 
 
 
@@ -102,36 +106,41 @@ async def handle_chat_start():
 
 @cl.on_message
 async def main(message: cl.Message):
+    try:
+        history = cl.user_session.get("history")
 
-    history = cl.user_session.get("history")
+        msg = cl.Message(content="")
+        await msg.send()
 
-    msg = cl.Message(content="")
-    await msg.send()
-
-    history.append({"role": "user", "content": message.content})
-
-
-    result = Runner.run_streamed(
-        career_mentor_agent,
-        input=history,
-        run_config=run_config
-    )
+        history.append({"role": "user", "content": message.content})
 
 
-    collected = ''
-
-    async for event in result.stream_events():
-        if event.type == "raw_response_event" and isinstance(event.data, ResponseTextDeltaEvent):
-            token = event.data.delta
-            collected += token
-            await msg.stream_token(token)
-
-    history.append({"role": "assistant", "content": result.final_output})
-
-    msg.content = collected
-    await msg.update()
- 
+        result = Runner.run_streamed(
+            career_mentor_agent,
+            input=history,
+            run_config=run_config
+        )
 
 
+        collected = ''
+
+        async for event in result.stream_events():
+
+            if event.type == "raw_response_event" and isinstance(event.data, ResponseTextDeltaEvent):
+                token = event.data.delta
+                collected += token
+                await msg.stream_token(token)
+
+        history.append({"role": "assistant", "content": result.final_output})
+
+        msg.content = collected
+        await msg.update()
+
+    except Exception as e:
+        await cl.Message(content=f"Error: {str(e)}").send()
+        raise
+    
+
+    
 
 
