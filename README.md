@@ -27,11 +27,15 @@ An AI-powered multi-agent system designed to guide users in their career plannin
 ### `get_career_roadmap(field: str)`
 
 A mock function that returns a list of essential skills for a given field.
+```
+career_skills = {
+    "cybersecurity": ["Network Security", "Ethical Hacking", "SIEM tools (Splunk)", "Python Scripting"],
+    "data science": ["Python", "Pandas", "SQL", "Machine Learning", "Data Visualization"],
+    "web development": ["HTML", "CSS", "JavaScript", "React", "Node.js"],
+    "ai engineer": ["Python", "TensorFlow", "PyTorch", "Neural Networks"],
+    "mobile app developer": ["Flutter", "Dart", "UI/UX Basics", "Firebase"]
+}
 
-Example fields supported:
-- Cybersecurity
-- Data Science  
-(You can extend this with more careers easily.)
 
 ---
 
