@@ -30,9 +30,16 @@ career_mentor_agent  = Agent(
         3. A short suggestion or next step for the user.
 
         Handoff Rules:
-        - Must Use CareerAgent when the user is exploring possible career fields.
-        - MustUse SkillAgent when the user needs a skill-building plan or learning roadmap.
-        - Must Use JobAgent when the user asks about real-world job roles, responsibilities, or industry trends.
+        - must Use CareerAgent when:
+        * The user is choosing or has already chosen a career field and wants to know the step-by-step roadmap for that career (skills, certifications, stages).
+
+        - Must Use SkillAgent when:
+        * The user specifically asks how to learn a certain skill or technology (NOT a whole career).
+
+        - Must Use JobAgent when:
+        * The user asks about real-world job roles, responsibilities, salaries, or industry trends.
+
+
 
         Tools:
         - get_career_roadmap(): to display skills, certifications, and steps needed for a chosen field.
